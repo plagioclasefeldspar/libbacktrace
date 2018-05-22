@@ -899,6 +899,10 @@ case $basic_machine in
 		basic_machine=powerpc-`echo "$basic_machine" | sed 's/^[^-]*-//'`
 		os=$os"spe"
 		;;
+	ebmon29k)
+		basic_machine=a29k-amd
+		os=-ebmon
+		;;
 	encore | umax | mmax)
 		basic_machine=ns32k-encore
 		;;
@@ -1193,6 +1197,21 @@ case $basic_machine in
 		;;
 	vpp*|vx|vx-*)
 		basic_machine=f301-fujitsu
+		;;
+	vxworks960)
+		basic_machine=i960-wrs
+		os=-vxworks
+		;;
+	vxworks68)
+		basic_machine=m68k-wrs
+		os=-vxworks
+		;;
+	vxworks29k)
+		basic_machine=a29k-wrs
+		os=-vxworks
+		;;
+	wasm32)
+		basic_machine=wasm32-unknown
 		;;
 	w65*)
 		basic_machine=w65-wdc
