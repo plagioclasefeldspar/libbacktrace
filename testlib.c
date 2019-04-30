@@ -105,7 +105,7 @@ check (const char *name, int index, const struct info *all, int want_lineno,
 
 int
 callback_one (void *vdata, uintptr_t pc ATTRIBUTE_UNUSED,
-	      const char *filename, int lineno, const char *function)
+	      const char *filename, int lineno, int colno ATTRIBUTE_UNUSED, const char *function)
 {
   struct bdata *data = (struct bdata *) vdata;
   struct info *p;

@@ -804,7 +804,7 @@ xcoff_lookup_pc (struct backtrace_state *state ATTRIBUTE_UNUSED,
   /* AIX prepends a '.' to function entry points, remove it.  */
   if (function != NULL && *function == '.')
     ++function;
-  return callback (data, pc, filename, lnno, function);
+  return callback (data, pc, filename, lnno, 0, function);
 }
 
 /* Return the file/line information for a PC using the XCOFF lineno
@@ -854,7 +854,7 @@ xcoff_fileline (struct backtrace_state *state, uintptr_t pc,
 
   /* FIXME: See if any libraries have been dlopen'ed.  */
 
-  return callback (data, pc, NULL, 0, NULL);
+  return callback (data, pc, NULL, 0, 0, NULL);
 }
 
 /* Initialize the function vector info for xcoff_fileline.  */

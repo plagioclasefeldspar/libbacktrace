@@ -91,13 +91,15 @@ extern struct backtrace_state *backtrace_create_state (
    DATA is the argument passed to backtrace_full.  PC is the program
    counter.  FILENAME is the name of the file containing PC, or NULL
    if not available.  LINENO is the line number in FILENAME containing
-   PC, or 0 if not available.  FUNCTION is the name of the function
-   containing PC, or NULL if not available.  This should return 0 to
-   continuing tracing.  The FILENAME and FUNCTION buffers may become
-   invalid after this function returns.  */
+   PC, or 0 if not available.  COLNO is the column number in line
+   LINENO of FILENAME containing PC, or 0 if not available. FUNCTION
+   is the name of the function containing PC, or NULL if not
+   available.  This should return 0 to continuing tracing.  The
+   FILENAME and FUNCTION buffers may become invalid after this
+   function returns.  */
 
 typedef int (*backtrace_full_callback) (void *data, uintptr_t pc,
-					const char *filename, int lineno,
+					const char *filename, int lineno, int colno,
 					const char *function);
 
 /* Get a full stack backtrace.  SKIP is the number of frames to skip;
