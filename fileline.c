@@ -42,8 +42,8 @@ POSSIBILITY OF SUCH DAMAGE.  */
 #include "backtrace.h"
 #include "internal.h"
 
-#ifndef HAVE_GETEXECNAME
-#define getexecname() NULL
+#ifdef HAVE_NSGETEXECUTABLEPATH
+#include <mach-o/dyld.h>
 #endif
 
 /* Initialize the fileline information from the executable.  Returns 1
@@ -58,6 +58,8 @@ fileline_initialize (struct backtrace_state *state,
   int pass;
   int called_error_callback;
   int descriptor;
+  int should_free_filename = 0;
+  size_t filename_alloc_size;
   const char *filename;
   char buf[64];
 
@@ -83,7 +85,7 @@ fileline_initialize (struct backtrace_state *state,
 
   descriptor = -1;
   called_error_callback = 0;
-  for (pass = 0; pass < 5; ++pass)
+  for (pass = 0; pass < 6; ++pass)
     {
       int does_not_exist;
 
@@ -92,22 +94,39 @@ fileline_initialize (struct backtrace_state *state,
 	case 0:
 	  filename = state->filename;
 	  break;
+#ifdef HAVE_GETEXECNAME
 	case 1:
 	  filename = getexecname ();
 	  break;
-	case 2:
+#endif
+#ifdef HAVE_NSGETEXECUTABLEPATH
+	case 2: {
+	  uint32_t bufsiz = sizeof(buf);
+	  if (_NSGetExecutablePath(buf, &bufsiz) == 0) {
+	    filename = buf;
+	  } else {
+	    filename_alloc_size = (size_t) bufsiz;
+	    filename = backtrace_alloc(state, filename_alloc_size, error_callback, data);
+	    if (filename != NULL) {
+	      should_free_filename = 1;
+	      _NSGetExecutablePath(filename, &bufsiz);
+	    }
+	  }
+	} break;
+#endif
+	case 3:
 	  filename = "/proc/self/exe";
 	  break;
-	case 3:
+	case 4:
 	  filename = "/proc/curproc/file";
 	  break;
-	case 4:
+	case 5:
 	  snprintf (buf, sizeof (buf), "/proc/%ld/object/a.out",
 		    (long) getpid ());
 	  filename = buf;
 	  break;
 	default:
-	  abort ();
+	  continue;
 	}
 
       if (filename == NULL)
@@ -144,6 +163,9 @@ fileline_initialize (struct backtrace_state *state,
 				 data, &fileline_fn))
 	failed = 1;
     }
+
+  if (should_free_filename)
+    backtrace_free(state, (void*) filename, filename_alloc_size, error_callback, data);
 
   if (failed)
     {

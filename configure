@@ -12478,6 +12478,19 @@ $as_echo "#define HAVE_GETEXECNAME 1" >>confdefs.h
 
 fi
 
+ac_fn_c_check_func "$LINENO" "_NSGetExecutablePath" "ac_cv_func__NSGetExecutablePath"
+if test "x$ac_cv_func__NSGetExecutablePath" = xyes; then :
+  have_nsgetexecutablepath=yes
+else
+  have_nsgetexecutablepath=no
+fi
+
+if test "$have_nsgetexecutablepath" = "yes"; then
+
+$as_echo "#define HAVE_NSGETEXECUTABLEPATH 1" >>confdefs.h
+
+fi
+
 # Check for the clock_gettime function.
 for ac_func in clock_gettime
 do :

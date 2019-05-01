@@ -404,6 +404,11 @@ if test "$have_getexecname" = "yes"; then
   AC_DEFINE(HAVE_GETEXECNAME, 1, [Define if getexecname is available.])
 fi
 
+AC_CHECK_FUNC(_NSGetExecutablePath, [have_nsgetexecutablepath=yes], [have_nsgetexecutablepath=no])
+if test "$have_nsgetexecutablepath" = "yes"; then
+  AC_DEFINE(HAVE_NSGETEXECUTABLEPATH, 1, [Define if _NSGetExecutablePath is available.])
+fi
+
 # Check for the clock_gettime function.
 AC_CHECK_FUNCS(clock_gettime)
 clock_gettime_link=
